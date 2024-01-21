@@ -20,11 +20,29 @@ function UserForm ({ createUser }) {
   };
 
   const handleSubmit = (values, formikBag) => {
-    if (!values.birthday) {
-      delete values.birthday;
-    }
-    createUser(values);
+    // values => Application/json
+    // if (!values.birthday) {
+    //   delete values.birthday;
+    // }
+    // createUser(values);
 
+    // files => multipart/form-data
+    const formData = new FormData();
+
+    // multer: formData(text) => req.body
+    formData.append('firstName', values.firstName);
+    formData.append('lastName', values.lastName);
+    formData.append('email', values.email);
+    formData.append('passwHash', values.passwHash);
+    if (values.birthday) {
+      formData.append('birthday', values.birthday);
+    }
+    formData.append('gender', values.gender);
+
+    // multer: formData(file) => req.file
+    formData.append('userPhoto', values.userPhoto);
+
+    createUser(formData);
     formikBag.resetForm();
   };
 
