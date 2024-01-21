@@ -18,7 +18,19 @@ export const getUsersThunk = createAsyncThunk(
       } = await API.getUsers();
       return data;
     } catch (err) {
-      return rejectWithValue({});
+      return rejectWithValue({ errors: err.response.data });
+    }
+  }
+);
+
+export const deleteUserThunk = createAsyncThunk(
+  `${USERS_SLICE_NAME}/delete`,
+  async (payload, { rejectWithValue }) => {
+    try {
+      await API.deleteUser(payload); // id
+      return payload;
+    } catch (err) {
+      return rejectWithValue({ errors: err.response.data });
     }
   }
 );
@@ -27,6 +39,7 @@ const usersSlice = createSlice({
   name: USERS_SLICE_NAME,
   initialState,
   extraReducers: builder => {
+    // get
     builder.addCase(getUsersThunk.pending, state => {
       state.isFetching = true;
       state.error = null;
@@ -36,6 +49,19 @@ const usersSlice = createSlice({
       state.isFetching = false;
     });
     builder.addCase(getUsersThunk.rejected, (state, { payload }) => {
+      state.error = payload;
+      state.isFetching = false;
+    });
+    // delete
+    builder.addCase(deleteUserThunk.pending, state => {
+      state.isFetching = true;
+      state.error = null;
+    });
+    builder.addCase(deleteUserThunk.fulfilled, (state, { payload }) => {
+      state.isFetching = false;
+      state.users = state.users.filter(u => u.id !== payload);
+    });
+    builder.addCase(deleteUserThunk.rejected, (state, { payload }) => {
       state.error = payload;
       state.isFetching = false;
     });
