@@ -4,22 +4,27 @@ import { USER_VALIDATION_SCHEMA } from '../../../utils/validate/validationSchema
 import Input from '../Input';
 import CONSTANTS from './../../../constants';
 import styles from './UserForm.module.sass';
+import { createUserThunk } from '../../../store/slices/usersSlice';
 
 const { GENDERS } = CONSTANTS;
 
-function UserForm () {
+function UserForm ({ createUser }) {
   const initialValues = {
     firstName: '',
     lastName: '',
     email: '',
-    passwordHash: '',
+    passwHash: '', // name, VAL_SCHEMA
     birthday: '',
     gender: GENDERS[0],
-    // userPhoto: '',
+    userPhoto: '',
   };
 
   const handleSubmit = (values, formikBag) => {
-    console.log('values :>> ', values);
+    if (!values.birthday) {
+      delete values.birthday;
+    }
+    createUser(values);
+
     formikBag.resetForm();
   };
 
@@ -63,7 +68,7 @@ function UserForm () {
           <Input
             label='Password:'
             type='password'
-            name='passwordHash'
+            name='passwHash'
             classes={classes}
           />
           <Input
@@ -81,7 +86,13 @@ function UserForm () {
           ))}
           <label>
             <span>Photo:</span>
-            <input type='file' name='userPhoto' />
+            <input
+              type='file'
+              name='userPhoto'
+              onChange={e => {
+                formikProps.setFieldValue('userPhoto', e.target.files[0]);
+              }}
+            />
           </label>
           <button type='submit'>Save</button>
         </Form>
@@ -90,6 +101,8 @@ function UserForm () {
   );
 }
 
-const mapDispatchToProps = dispatch => ({});
+const mapDispatchToProps = dispatch => ({
+  createUser: data => dispatch(createUserThunk(data)),
+});
 
 export default connect(null, mapDispatchToProps)(UserForm);
