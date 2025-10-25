@@ -17,7 +17,10 @@ usersRouter
   .put(usersController.updateOrCreateUser, usersController.createUser)
   .delete(usersController.deleteUserById);
 
-usersRouter.get('/:id/tasks', usersController.getUserTasks);
+usersRouter
+  .route('/:id/tasks')
+  .get(usersController.getUserTasks)
+  .post(usersController.createUserTasks);
 
 // save image to images
 usersRouter.patch(
@@ -25,6 +28,8 @@ usersRouter.patch(
   upload.uploadUserPhoto,
   usersController.updateUserImage
 );
+
+usersRouter.delete('/:userId/tasks/:taskId', usersController.deleteUserTask);
 
 module.exports = usersRouter;
 

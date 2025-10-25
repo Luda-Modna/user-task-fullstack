@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { User } = require('../db/models');
+const { User, Task } = require('../db/models');
 const createHttpError = require('http-errors');
 
 module.exports.createUser = async (req, res, next) => {
@@ -164,9 +164,6 @@ module.exports.getUserTasks = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    // чи є користувач
-    // - => 404
-    // + отримати його таски
     const foundUser = await User.findByPk(id);
 
     if (!foundUser) {
@@ -179,6 +176,46 @@ module.exports.getUserTasks = async (req, res, next) => {
     });
 
     res.status(200).send({ data: foundUserTasks });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports.createUserTasks = async (req, res, next) => {
+  const { id } = req.params;
+  const { body, deadline } = req.body;
+
+  try {
+    const foundUser = await User.findByPk(id);
+
+    if (!foundUser) {
+      return next(createHttpError(404, 'User Not Found'));
+    }
+
+    const createUserTasks = await foundUser.createTask({
+      body,
+      deadline,
+    });
+
+    res.status(201).send({ data: createUserTasks });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports.deleteUserTask = async (req, res, next) => {
+  const { userId, taskId } = req.params;
+
+  try {
+    const foundUser = await User.findByPk(userId);
+    if (!foundUser) return next(createHttpError(404, 'User Not Found'));
+
+    const task = await Task.findOne({ where: { id: taskId, userId } });
+    if (!task) return next(createHttpError(404, 'Task Not Found'));
+
+    await task.destroy();
+
+    res.status(200).send({ message: 'Task deleted', taskId });
   } catch (err) {
     next(err);
   }
