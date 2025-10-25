@@ -41,7 +41,7 @@ export const deleteUserThunk = createAsyncThunk(
   `${USERS_SLICE_NAME}/delete`,
   async (payload, { rejectWithValue }) => {
     try {
-      await API.deleteUser(payload); // id
+      await API.deleteUser(payload); 
       return payload;
     } catch (err) {
       return rejectWithValue({ errors: err.response.data });

@@ -20,10 +20,9 @@ export const UsersList = ({
     <>
       <BeatLoader loading={isFetching} />
       {error && <div>!!!ERROR!!!</div>}
-      <ul>
+      <ul className={styles.userCard}>
         {users.map(u => (
-          <li key={u.id}>
-            <button onClick={() => deleteUser(u.id)}>X</button>
+          <li key={u.id} className={styles.itemsCard}>
             <img
               className={styles.userImage}
               src={
@@ -31,7 +30,18 @@ export const UsersList = ({
               }
               alt={`${u.firstName} ${u.lastName}`}
             />
-            <p>{JSON.stringify(u)}</p>
+            <div className={styles.userInfo}>
+              <h3>
+                {u.firstName} {u.lastName}
+              </h3>
+              <p>{u.email}</p>
+              <p>{u.gender}</p>
+              {u.birthday && <p>{new Date(u.birthday).toLocaleDateString()}</p>}
+              <div className={styles.button}>
+                <button className={styles.buttonItems} onClick={() => deleteUser(u.id)}>Delete user</button>
+                <button className={styles.buttonItems} >Get Tasks</button>
+              </div>
+            </div>
           </li>
         ))}
       </ul>
