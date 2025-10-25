@@ -13,3 +13,12 @@ export const createUser = data => axiosInstance.post('/users', data);
 export const getUsers = () => axiosInstance.get('/users');
 
 export const deleteUser = id => axiosInstance.delete(`/users/${id}`);
+
+export const getUserTasks = userId =>
+  axiosInstance.get(`/users/${userId}/tasks`);
+
+export const createUserTasks = (userId, data) =>
+  axiosInstance.post(`/users/${userId}/tasks`, data);
+
+export const deleteUserTask = (userId, taskId) =>
+  axiosInstance.delete(`/users/${userId}/tasks/${taskId}`);
