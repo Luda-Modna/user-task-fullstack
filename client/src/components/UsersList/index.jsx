@@ -4,6 +4,7 @@ import styles from './UsersList.module.sass';
 import defImage from './defaultPhoto.jpg';
 import { useEffect } from 'react';
 import { deleteUserThunk, getUsersThunk } from '../../store/slices/usersSlice';
+import { useNavigate } from 'react-router-dom';
 
 export const UsersList = ({
   users,
@@ -12,6 +13,8 @@ export const UsersList = ({
   getUsers,
   deleteUser,
 }) => {
+const navigate = useNavigate()
+
   useEffect(() => {
     getUsers();
   }, []);
@@ -38,8 +41,18 @@ export const UsersList = ({
               <p>{u.gender}</p>
               {u.birthday && <p>{new Date(u.birthday).toLocaleDateString()}</p>}
               <div className={styles.button}>
-                <button className={styles.buttonItems} onClick={() => deleteUser(u.id)}>Delete user</button>
-                <button className={styles.buttonItems} >Get Tasks</button>
+                <button
+                  className={styles.buttonItems}
+                  onClick={() => deleteUser(u.id)}
+                >
+                  Delete user
+                </button>
+                <button
+                  className={styles.buttonItems}
+                  onClick={() => navigate(`/users/${u.id}/tasks`)}
+                >
+                  Get Tasks
+                </button>
               </div>
             </div>
           </li>
